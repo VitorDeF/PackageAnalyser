@@ -1,9 +1,6 @@
 package org.example;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import org.pcap4j.packet.IpV4Packet;
 
 public class PacketInfo {
     private int count;
@@ -11,18 +8,16 @@ public class PacketInfo {
     private String destination;
     private String protocol;
     private int length;
-    private String header;
-    private String payload;
+    private byte[] packet;
     private String timestamp;
 
-    public PacketInfo(int count, String source, String destination, String protocol, int length, String header, String payload, String timestamp) {
+    public PacketInfo(int count, String source, String destination, String protocol, int length, byte[] packet, String timestamp) {
         this.count = count;
-        this.source = source;
-        this.protocol = protocol;
+        this.source = source.intern();
+        this.destination = destination.intern();
+        this.protocol = protocol.intern();
         this.length = length;
-        this.destination = destination;
-        this.header = header;
-        this.payload = payload;
+        this.packet = packet;
         this.timestamp = timestamp;
     }
 
@@ -31,7 +26,21 @@ public class PacketInfo {
     public String getDestination() {return destination;}
     public String getProtocol() {return protocol;}
     public int getLength() {return length;}
-    public String getHeader() {return header;}
-    public String getPayload() {return payload;}
+    public String getHeader() {
+        try {
+            return IpV4Packet.newPacket(packet, 0, packet.length).getHeader().toString();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    public String getPayload() {
+        try {
+            return IpV4Packet.newPacket(packet, 0, packet.length).getPayload().toString();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
     public String getTimestamp() {return timestamp;}
 }

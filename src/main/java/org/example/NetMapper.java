@@ -83,8 +83,7 @@ public class NetMapper {
                             destination,
                             protocol,
                             length,
-                            srcAddrHeader.toString(),
-                            payload.toString(),
+                            ipV4Packet.getRawData(),
                             Instant.now().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"))
                     );
 
