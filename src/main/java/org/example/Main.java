@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -97,22 +98,22 @@ public class Main extends Application{
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<PacketInfo, Integer> count = new TableColumn<>("No.");
-        count.setCellValueFactory(cellData -> cellData.getValue().countProperty().asObject());
+        count.setCellValueFactory(new PropertyValueFactory<>("count"));
 
         TableColumn<PacketInfo, String> source = new TableColumn<>("Source");
-        source.setCellValueFactory(cellData -> cellData.getValue().sourceProperty());
+        source.setCellValueFactory(new PropertyValueFactory<>("source"));
 
         TableColumn<PacketInfo, String> destination = new TableColumn<>("Destination");
-        destination.setCellValueFactory(cellData -> cellData.getValue().destinationProperty());
+        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
 
         TableColumn<PacketInfo, String> protocol = new TableColumn<>("Protocol");
-        protocol.setCellValueFactory(cellData -> cellData.getValue().protocolProperty());
+        protocol.setCellValueFactory(new PropertyValueFactory<>("protocol"));
 
         TableColumn<PacketInfo, Integer> length = new TableColumn<>("Length");
-        length.setCellValueFactory(cellData -> cellData.getValue().lengthProperty().asObject());
+        length.setCellValueFactory(new PropertyValueFactory<>("length"));
 
         TableColumn<PacketInfo, String> timestamp = new TableColumn<>("Capture Time");
-        timestamp.setCellValueFactory(cellData -> cellData.getValue().timestampProperty());
+        timestamp.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 
         table.getColumns().addAll(count, source, destination, protocol, length, timestamp);
         return table;
