@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +53,7 @@ public class NetMapper {
         return null;
     }
 
-    public void captureNetwork(ObservableList<PacketInfo> packetList) {
+    public void captureNetwork(Queue<PacketInfo> packetQueue) {
         String ip = mapNetwork();
         counter.set(0);
         try{
@@ -87,7 +88,7 @@ public class NetMapper {
                             Instant.now().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss"))
                     );
 
-                    Platform.runLater(() -> packetList.add(packetInfo));
+                    packetQueue.add(packetInfo);
                 }
             };
 

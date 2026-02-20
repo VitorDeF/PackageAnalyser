@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -12,11 +13,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class Main extends Application{
 
     private boolean isCapturing = false;
     private final ObservableList<PacketInfo> packetList = FXCollections.observableArrayList();
     private final NetMapper netMapper = new NetMapper();
+    private final Queue<PacketInfo> packetQueue = new ConcurrentLinkedQueue<>();
     private double appWidth = Screen.getPrimary().getBounds().getWidth()*3/4;
     private double appHeight = Screen.getPrimary().getBounds().getHeight()*3/4;
 
@@ -37,10 +44,24 @@ public class Main extends Application{
         TableView<PacketInfo> table = createPacketTable();
         table.setItems(packetList);
 
+        AnimationTimer updater = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (!packetQueue.isEmpty()) {
+                    List<PacketInfo> auxList = new ArrayList<>();
+                    PacketInfo info;
+                    while ((info = packetQueue.poll()) != null) {
+                        auxList.add(info);
+                    }
+                    packetList.addAll(auxList);
+                }
+            }
+        };
+        updater.start();
+
         TextArea detailsAreaHeader = createDetailArea();
         TextArea detailsAreaPayload = createDetailArea();
         SplitPane splitPaneDetails = new SplitPane();
-
 
         splitPaneDetails.setOrientation(Orientation.HORIZONTAL);
         splitPaneDetails.getItems().addAll(detailsAreaHeader, detailsAreaPayload);
@@ -50,7 +71,6 @@ public class Main extends Application{
 
         root.setCenter(table);
         root.setBottom(splitPaneDetails);
-
 
         table.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newSelection) -> {
             detailsAreaHeader.setText(newSelection.getHeader());
@@ -64,7 +84,7 @@ public class Main extends Application{
                 btn.setText("Initialize Capture");
             } else {
                 packetList.clear();
-                new Thread(() -> netMapper.captureNetwork(packetList)).start();
+                new Thread(() -> netMapper.captureNetwork(packetQueue)).start();
                 isCapturing = true;
                 btn.setText("Stop Capture");
             }
