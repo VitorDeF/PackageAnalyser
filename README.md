@@ -17,6 +17,7 @@ A network traffic analyzer built with JavaFX and Pcap4J. This project was design
 ## Building the Executable
 To generate a standalone "Fat JAR":
 * mvn clean package
+  
 The executable will be located in the target/ folder.
 
 # Technologies
